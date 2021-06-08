@@ -1,0 +1,2 @@
+rootProject.name = "MindBrowser"
+include ':app'
