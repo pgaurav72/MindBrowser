@@ -1,6 +1,7 @@
 package com.example.mindbrowser.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,10 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.mindbrowser.R;
 import com.example.mindbrowser.databinding.ActivityContactsBinding;
 import com.example.mindbrowser.model.Contacts;
 import com.example.mindbrowser.model.ContactsAdapter;
+import com.example.mindbrowser.model.ContactModel;
+import com.example.mindbrowser.model.roomdatabase.ContactDetails;
+import com.example.mindbrowser.viewModel.ContactsViewModel;
+import com.example.mindbrowser.viewModel.MainViewModel;
 
 public class ContactsActivity extends AppCompatActivity {
 
@@ -20,6 +24,8 @@ public class ContactsActivity extends AppCompatActivity {
     private ActivityContactsBinding contactsBinding;
     private Contacts contacts;
     private ContactsAdapter mContactsAdapter;
+    private ContactModel contactModel = new ContactModel();
+    private ContactsViewModel mContactsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +35,25 @@ public class ContactsActivity extends AppCompatActivity {
         View view = contactsBinding.getRoot();
         setContentView(view);
 
+        mContactsViewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
+
         contactsRecyclerView = contactsBinding.contactsReclyclerView;
         contactsRecyclerView.setHasFixedSize(true);
         contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        contacts = new Contacts();
-        mContactsAdapter = new ContactsAdapter(this, contacts.getContacts(this));
-        contactsRecyclerView.setAdapter(mContactsAdapter);
-        mContactsAdapter.notifyDataSetChanged();
+        getAllContacts();
 
     }
+
+    private void getAllContacts() {
+        mContactsViewModel.getContactDetails().observe(this, contactDetails -> {
+            if (contactDetails != null){
+                mContactsAdapter = new ContactsAdapter(this, contactDetails.getContactModelArrayList());
+                contactsRecyclerView.setAdapter(mContactsAdapter);
+                mContactsAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+
 }

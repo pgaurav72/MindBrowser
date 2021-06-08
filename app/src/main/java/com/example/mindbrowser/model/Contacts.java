@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.example.mindbrowser.model.roomdatabase.ContactDetails;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -47,7 +49,6 @@ public class Contacts {
                         info.id = id;
                         info.name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                         info.mobileNumber = cursorInfo.getString(cursorInfo.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        info.photo = photo;
                         info.photoURI= pURI;
                         list.add(info);
                     }
@@ -58,6 +59,10 @@ public class Contacts {
             cursor.close();
         }
         return list;
+    }
+
+    private void storeContacts(){
+
     }
 
 }

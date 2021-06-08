@@ -3,6 +3,7 @@ package com.example.mindbrowser.view;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.Intent;
@@ -15,6 +16,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.mindbrowser.databinding.ActivityMainBinding;
+import com.example.mindbrowser.model.Contacts;
+import com.example.mindbrowser.model.roomdatabase.ContactDetails;
+import com.example.mindbrowser.viewModel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -22,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ActivityMainBinding mainBinding;
     private Button contactsButton, favouritesButton, deletedButton;
     public static final int PERMISSION_REQUEST_CODE = 12;
+    private MainViewModel mainViewModel;
+    private Contacts mContacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         View view = mainBinding.getRoot();
         setContentView(view);
 
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel .class);
         contactsButton = mainBinding.contactsButton;
         favouritesButton = mainBinding.favouritesButton;
         deletedButton = mainBinding.deletedButton;
@@ -60,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         )
         {
             Log.d(TAG, "Permissions Granted!");
+            storeContacts();
         }else {
             Log.d(TAG, "Permissions Not Granted!");
             requestAppPermissions();
@@ -108,8 +116,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     Log.d(TAG, "onRequestPermissionsResult Permissions Granted: ");
+                    storeContacts();
                 }
             }
         }
     }
+
+
+    private void storeContacts(){
+        mContacts = new Contacts();
+        Log.d(TAG, "storeContacts: ");
+        ContactDetails contactDetails = new ContactDetails();
+        contactDetails.setContactModelArrayList(mContacts.getContacts(this));
+        mainViewModel.insert(contactDetails);
+    }
+
 }
